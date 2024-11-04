@@ -1,0 +1,19 @@
+/* Navbar.css */
+.navbar {
+  background-color: #333; /* Background color of the navbar */
+  padding: 1em;
+  display: flex;
+  justify-content: space-around;
+}
+
+.navbar-item {
+  color: #ffffff; /* Default text color */
+  text-decoration: none;
+  font-weight: bold; /* Makes the text bold */
+  font-size: 1.1em;
+  transition: color 0.3s;
+}
+
+.navbar-item:hover {
+  color: #f93b3b; /* Change this to any color you like for the hover effect */
+}
