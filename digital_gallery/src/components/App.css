@@ -1,19 +1,81 @@
-/* Navbar.css */
-.navbar {
-  background-color: #333; /* Background color of the navbar */
-  padding: 1em;
+/* General Layout */
+.container {
   display: flex;
-  justify-content: space-around;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  background-color:rgba(78, 78, 78, 0.826);
+  /* border-bottom: 1px solid #ddd; */
 }
 
 .navbar-item {
-  color: #ffffff; /* Default text color */
+  margin: 0 1em;
+  color: white;
   text-decoration: none;
-  font-weight: bold; /* Makes the text bold */
-  font-size: 1.1em;
-  transition: color 0.3s;
+  font-weight: bold;
+  font-size: large;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
-.navbar-item:hover {
-  color: #f93b3b; /* Change this to any color you like for the hover effect */
+.navbar-item.active {
+  color: #d9534f; /* Active tab color */
+}
+
+.navbar-icons .icon-button {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+/* Sidebar */
+.sidebar {
+  padding: 1em;
+  background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
+  width: 200px;
+}
+
+.filter-button {
+  background-color: #820e0a;
+  color: #fff;
+  padding: 0.5em 1em;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1em;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+h4 {
+  margin-top: 1em;
+  font-weight: bold;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 0.5em 0;
+}
+
+/* Gallery */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1em;
+  padding: 1em;
+  flex-grow: 1;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
