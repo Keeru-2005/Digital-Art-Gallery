@@ -10,6 +10,9 @@ function Navbar() {
             <Link to="/photography" className="navbar-item">Photography</Link>
             <Link to="/painting" className="navbar-item">Painting</Link>
             <Link to="/artist" className="navbar-item">Artist</Link>
+            <Link to="/search" className="navbar-item">Search</Link>
+            <Link to="/cart" className="navbar-item">Cart</Link>
+            <Link to="/profile" className="navbar-item">Profile</Link>
         </nav>
     );
 }
