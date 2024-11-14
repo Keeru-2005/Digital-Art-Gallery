@@ -1,6 +1,7 @@
 /* General Layout */
 .container {
   display: flex;
+  background-color: #FFF8E1; /* Lightest shade from palette as background */
 }
 
 /* Navbar */
@@ -8,21 +9,26 @@
   display: flex;
   justify-content: space-between;
   padding: 1em;
-  background-color:rgba(78, 78, 78, 0.826);
-  /* border-bottom: 1px solid #ddd; */
+  background-color: #A44277; /* Dark purple from palette for navbar */
+  color: white;
 }
 
 .navbar-item {
   margin: 0 1em;
-  color: white;
+  color: #FFFFFF;
   text-decoration: none;
   font-weight: bold;
   font-size: large;
   font-family: Georgia, 'Times New Roman', Times, serif;
+  transition: color 0.3s;
+}
+
+.navbar-item:hover {
+  color: #FFB383; /* Soft peach for hover contrast */
 }
 
 .navbar-item.active {
-  color: #d9534f; /* Active tab color */
+  color: #FFB383; /* Match active tab color */
 }
 
 .navbar-icons .icon-button {
@@ -30,29 +36,38 @@
   border: none;
   font-size: 1.2em;
   cursor: pointer;
+  color: #FFFFFF;
 }
 
 /* Sidebar */
 .sidebar {
   padding: 1em;
-  background-color: #f9f9f9;
-  border-right: 1px solid #ddd;
-  width: 200px;
+  background-color: #FFB383; /* Peach color from palette for sidebar */
+  color: #4A2831; /* Darker color for text contrast */
+  border-right: 2px solid #E57C58;
+  width: 220px;
 }
 
 .filter-button {
-  background-color: #820e0a;
-  color: #fff;
+  background-color: #FF8A5B; /* Orange shade for filter button */
+  color: #FFFFFF;
   padding: 0.5em 1em;
   border: none;
   cursor: pointer;
   margin-bottom: 1em;
   font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+  background-color: #E57C58; /* Darker orange on hover */
 }
 
 h4 {
   margin-top: 1em;
   font-weight: bold;
+  color: #4A2831; /* Darker text color */
 }
 
 ul {
@@ -62,6 +77,13 @@ ul {
 
 li {
   margin: 0.5em 0;
+  color: #4A2831;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+li:hover {
+  color: #A44277; /* Dark purple for hover effect */
 }
 
 /* Gallery */
@@ -71,11 +93,38 @@ li {
   gap: 1em;
   padding: 1em;
   flex-grow: 1;
+  background-color: #FFF1D0; /* Pale yellow as gallery background */
 }
 
 .gallery-item img {
   width: 100%;
   height: auto;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  border: 2px solid #E0E0E0;
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-item img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Typography */
+body {
+  font-family: 'Raleway', sans-serif;
+}
+
+h1 {
+  font-family: 'Great Vibes', cursive;
+  color: #4A2831; /* Darkest color for high contrast */
+}
+
+h2, h3, .logo {
+  font-family: 'Pacifico', cursive;
+  color: #A44277; /* Dark purple for brand consistency */
+}
+
+p, .description {
+  font-family: 'Playfair Display', serif;
+  color: #4A2831; /* Darker shade for readability */
 }
