@@ -1,0 +1,27 @@
+.home-container {
+    text-align: center;
+    padding: 2rem;
+}
+
+.home-header {
+    margin-bottom: 2rem;
+}
+
+.home-buttons .btn {
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.featured-art {
+    margin-top: 2rem;
+}
+
+.art-preview img {
+    width: 150px;
+    margin: 0.5rem;
+    border-radius: 10px;
+}
