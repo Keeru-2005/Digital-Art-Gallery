@@ -18,6 +18,10 @@ const Image = mongoose.model('Image', imageSchema);
 mongoose.connect('mongodb://localhost:27017/artgallery', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+}).then(() => {
+  console.log('Connected to MongoDB');
+}).catch((err) => {
+  console.error('Failed to connect to MongoDB', err);
 });
 
 // Path to the CSV file and images folder
@@ -46,21 +50,25 @@ async function uploadImages() {
 
         // Check if image file exists
         if (fs.existsSync(imagePath)) {
-          // Read and convert the image to base64
-          const imageData = fs.readFileSync(imagePath, { encoding: 'base64' });
+          try {
+            // Read and convert the image to base64 (ensure the file size is within acceptable limits)
+            const imageData = fs.readFileSync(imagePath, { encoding: 'base64' });
 
-          // Create a new Image document
-          const newImage = new Image({
-            title,
-            description,
-            category,
-            price,
-            imageData, // Store base64 image data
-          });
+            // Create a new Image document
+            const newImage = new Image({
+              title,
+              description,
+              category,
+              price,
+              imageData, // Store base64 image data
+            });
 
-          // Save to MongoDB
-          await newImage.save();
-          console.log(`Uploaded ${title} to MongoDB.`);
+            // Save to MongoDB
+            await newImage.save();
+            console.log(`Uploaded ${title} to MongoDB.`);
+          } catch (err) {
+            console.error(`Failed to process image ${filename}: ${err.message}`);
+          }
         } else {
           console.error(`Image file ${filename} not found for record ${title}.`);
         }

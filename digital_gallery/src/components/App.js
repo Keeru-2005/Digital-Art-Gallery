@@ -9,6 +9,7 @@ import Artist from './Artist';
 import Profile from './Profile';
 import Search from './Search';
 import Cart from './Cart';
+import PaintingDetails from './PaintingDetails'
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/search" element={<Search />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/paintings/:paintingId" element={<PaintingDetails/>} />
 
             </Routes>
         </Router>

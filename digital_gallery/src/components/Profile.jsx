@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 function ProfilePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [isSignup, setIsSignup] = useState(false);
+  const [credentials, setCredentials] = useState({ email: "", password: "", name: "" });
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   // Handle input change
   const handleChange = (e) => {
@@ -13,9 +16,41 @@ function ProfilePage() {
   };
 
   // Handle login submission
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoggedIn(true); // Assume login is successful
+    try {
+      const response = await axios.post("http://localhost:5000/api/login", {
+        email: credentials.email,
+        password: credentials.password,
+      });
+      localStorage.setItem("token", response.data.token); // Save JWT token in localStorage
+      setToken(response.data.token);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
+    }
+  };
+
+  // Handle signup submission
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5000/api/signup", {
+        email: credentials.email,
+        password: credentials.password,
+        name: credentials.name,
+      });
+      setIsSignup(false); // Switch to login form after successful signup
+    } catch (error) {
+      console.error("Signup failed:", error.response?.data || error.message);
+    }
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    setIsLoggedIn(false);
   };
 
   return (
@@ -53,12 +88,26 @@ function ProfilePage() {
               <label style={{ fontWeight: "bold" }}>Phone no: </label>
               <span>+1234567890</span>
             </div>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "10px",
+                borderRadius: "4px",
+                backgroundColor: "#f44336",
+                color: "#fff",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              Logout
+            </button>
           </div>
 
           {/* Art Section */}
           <div style={{ flex: 1, backgroundColor: "#eee", padding: "20px", borderRadius: "8px" }}>
             <h2 style={{ fontWeight: "bold" }}>Your Art</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {/* Add dynamic art display based on fetched data */}
               <div style={{ display: "flex", alignItems: "flex-start" }}>
                 <div
                   style={{
@@ -86,38 +135,65 @@ function ProfilePage() {
                   <span> 24" x 36"</span>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "flex-start" }}>
-                <div
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    backgroundColor: "#ccc",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    fontSize: "24px",
-                    color: "#333",
-                    marginRight: "10px",
-                  }}
-                >
-                  <i className="fas fa-image"></i>
-                </div>
-                <div style={{ marginLeft: "10px" }}>
-                  <label style={{ fontWeight: "bold" }}>Artist:</label>
-                  <span> Alex Smith</span>
-                  <br />
-                  <label style={{ fontWeight: "bold" }}>Cost:</label>
-                  <span> $750</span>
-                  <br />
-                  <label style={{ fontWeight: "bold" }}>Dimensions:</label>
-                  <span> 30" x 40"</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
+      ) : isSignup ? (
+        // Signup Form
+        <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "15px", width: "300px", padding: "30px", border: "1px solid #ddd", borderRadius: "8px", backgroundColor: "#fff", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
+          <h2 style={{ textAlign: "center", fontWeight: "bold" }}>Signup</h2>
+          <div>
+            <label style={{ fontWeight: "bold", display: "block", marginBottom: "5px" }}>Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={credentials.name}
+              onChange={handleChange}
+              style={{ width: "100%", padding: "10px", borderRadius: "4px", border: "1px solid #ccc" }}
+              required
+            />
+          </div>
+          <div>
+            <label style={{ fontWeight: "bold", display: "block", marginBottom: "5px" }}>Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={credentials.email}
+              onChange={handleChange}
+              style={{ width: "100%", padding: "10px", borderRadius: "4px", border: "1px solid #ccc" }}
+              required
+            />
+          </div>
+          <div>
+            <label style={{ fontWeight: "bold", display: "block", marginBottom: "5px" }}>Password:</label>
+            <input
+              type="password"
+              name="password"
+              value={credentials.password}
+              onChange={handleChange}
+              style={{ width: "100%", padding: "10px", borderRadius: "4px", border: "1px solid #ccc" }}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            style={{
+              padding: "10px",
+              borderRadius: "4px",
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
+            Signup
+          </button>
+          <p style={{ textAlign: "center", cursor: "pointer" }} onClick={() => setIsSignup(false)}>
+            Already have an account? Login here.
+          </p>
+        </form>
       ) : (
-        // Centered Login Form before login
+        // Login Form
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "15px", width: "300px", padding: "30px", border: "1px solid #ddd", borderRadius: "8px", backgroundColor: "#fff", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
           <h2 style={{ textAlign: "center", fontWeight: "bold" }}>Login</h2>
           <div>
@@ -142,9 +218,22 @@ function ProfilePage() {
               required
             />
           </div>
-          <button type="submit" style={{ padding: "10px", borderRadius: "4px", backgroundColor: "#4CAF50", color: "#fff", fontWeight: "bold", cursor: "pointer" }}>
+          <button
+            type="submit"
+            style={{
+              padding: "10px",
+              borderRadius: "4px",
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
             Login
           </button>
+          <p style={{ textAlign: "center", cursor: "pointer" }} onClick={() => setIsSignup(true)}>
+            Don't have an account? Signup here.
+          </p>
         </form>
       )}
     </div>
