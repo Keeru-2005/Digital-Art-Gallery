@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PaintingDetail({ painting, onBack }) {
+function PaintingDetail({ painting, onBack, addToCart }) {
     // Inline styles for detail view
     const containerStyle = {
         maxWidth: '800px',
@@ -21,7 +21,7 @@ function PaintingDetail({ painting, onBack }) {
 
     const buttonStyle = {
         marginTop: '20px',
-        marginRight:'10px',
+        marginRight: '10px',
         padding: '10px 20px',
         backgroundColor: 'maroon',
         color: 'white',
@@ -47,7 +47,9 @@ function PaintingDetail({ painting, onBack }) {
             <button style={buttonStyle} onClick={onBack}>
                 Back to Paintings
             </button>
-            <button style={buttonStyle}>Add to Cart</button>
+            <button style={buttonStyle} onClick={() => addToCart(painting)}>
+                Add to Cart
+            </button>
         </div>
     );
 }

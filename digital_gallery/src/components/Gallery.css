@@ -1,0 +1,105 @@
+/* Gallery.css */
+
+/* General Styles */
+body {
+    font-family: 'Arial, sans-serif';
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f8;
+    color: #333;
+}
+
+/* Container */
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* text-align: center; */
+    /* padding: 40px 20px; */
+    /* min-height: 100vh; */
+    /* padding-top: 50px; */
+}
+
+/* Heading */
+.gallery-heading {
+    font-size: 2.5rem;
+    /* margin-bottom: 20px; */
+    color: #444;
+}
+
+/* Paragraph */
+.gallery-paragraph {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    max-width: 1000px;
+    margin-bottom: 30px;
+    color: #666;
+
+}
+
+.gallery-button {
+    display: inline-block;
+    padding: 1.0em 3em;
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #FFFFFF; /* White text for contrast */
+    background: linear-gradient(135deg, #A44277, #FF8A5B); /* Gradient from purple to orange */
+    border: none;
+    border-radius: 25px; /* Rounded edges for a modern look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+
+  }
+  
+  .gallery-button:hover {
+    background: linear-gradient(135deg, #FF8A5B, #A44277); /* Reverse gradient on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Slightly stronger shadow on hover */
+    transform: scale(1.05); /* Subtle zoom effect */
+  }
+  
+  .gallery-button:active {
+    transform: scale(0.98); /* Slight "press" effect */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); /* Reduced shadow when pressed */
+  }
+
+/* Category Section */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 10px;
+    /* width: 100%; */
+    max-width: 1200px;
+    margin: auto;
+}
+
+.gallery-card {
+    padding: 20px;
+    cursor: pointer;
+    background: #f1f1f1;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
+}
+
+.gallery-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-card:hover img {
+    transform: scale(1.05);
+}

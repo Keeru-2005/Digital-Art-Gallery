@@ -51,12 +51,23 @@ const Search = () => {
     fontSize: '16px',
   };
   const buttonStyle = {
-    padding: '10px',
-    backgroundColor: '#007bff',
+    padding: '10px 20px',
+    backgroundColor: '#A44277', // Dark purple
     color: 'white',
     border: 'none',
+    borderRadius: '25px', // Rounded corners
+    fontFamily: "'Times', sans-serif",
+    fontSize: '18px',
+    fontWeight: 'bold',
     cursor: 'pointer',
+    textTransform: 'uppercase',
+    transition: 'all 0.3s ease', // Smooth transition for all effects
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow
+    display: 'inline-block',
+    margin: '10px', // Some space around the button
   };
+  
+  
   const resultsStyle = { marginTop: '20px' };
   const resultItemStyle = {
     marginBottom: '10px',
