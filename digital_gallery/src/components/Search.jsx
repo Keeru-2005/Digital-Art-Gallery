@@ -1,96 +1,104 @@
-// Search.jsx
 import React, { useState } from 'react';
 
 const Search = () => {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [query, setQuery] = useState(''); // Store search query
+  const [results, setResults] = useState([]); // Store search results
 
-  // Simulated data (can be replaced with actual data from a database in the future)
-  const artworks = [
-    { id: 1, title: "Sunset Bliss", artist: "John Doe" },
-    { id: 2, title: "Mountain Majesty", artist: "Jane Smith" },
-    { id: 3, title: "Urban Landscape", artist: "Emily Green" },
-    { id: 4, title: "Abstract Wonder", artist: "Michael Brown" },
-  ];
-
+  // Handle search form submission
   const handleSearch = (e) => {
     e.preventDefault();
+    console.log('Searching for:', query);
 
-    // Filter artworks based on the search query
-    const filteredResults = artworks.filter(artwork =>
-      artwork.title.toLowerCase().includes(query.toLowerCase()) ||
-      artwork.artist.toLowerCase().includes(query.toLowerCase())
-    );
-    setResults(filteredResults);
+    // Construct query parameters
+    const searchParams = new URLSearchParams();
+    if (query) {
+      searchParams.set('title', query); // Set the title as the query parameter
+    }
+
+    // Fetch the paintings from the backend with the search query
+    fetch(`http://localhost:5000/api/paintings?${searchParams.toString()}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setResults(data.paintings); // Set the filtered paintings in the state
+        console.log('Filtered results:', data.paintings); // Log the results
+      })
+      .catch((error) => {
+        console.error('Error fetching paintings:', error);
+      });
   };
 
+  // Inline styles
+  const containerStyle = { padding: '20px' };
+  const formStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: '20px',
+  };
+  const inputStyle = {
+    padding: '10px',
+    marginBottom: '10px',
+    fontSize: '16px',
+  };
+  const buttonStyle = {
+    padding: '10px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    cursor: 'pointer',
+  };
+  const resultsStyle = { marginTop: '20px' };
+  const resultItemStyle = {
+    marginBottom: '10px',
+    borderBottom: '1px solid #ccc',
+    paddingBottom: '10px',
+  };
+  const titleStyle = { fontSize: '20px', fontWeight: 'bold' };
+  const artistStyle = { fontSize: '16px', fontStyle: 'italic' };
+  const movementStyle = { fontSize: '14px', color: '#555' };
+  const noResultsStyle = { color: '#888' };
+  const imageStyle = { width: '100%', maxWidth: '400px', height: 'auto' };
+
   return (
-    <div style={{ width: '75%', margin: '0 auto' }}>
+    <div style={containerStyle}>
       <form onSubmit={handleSearch} style={formStyle}>
         <input
           type="text"
-          placeholder="Search artworks..."
+          placeholder="Search by title..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={inputStyle}
         />
-        <button type="submit" style={buttonStyle}>Search</button>
+        <button type="submit" style={buttonStyle}>
+          Search
+        </button>
       </form>
 
-      {/* Display search results */}
       <div style={resultsStyle}>
         {results.length > 0 ? (
-          results.map((artwork) => (
-            <div key={artwork.id} style={resultItemStyle}>
-              <h3>{artwork.title}</h3>
-              <p>by {artwork.artist}</p>
+          results.map((artwork, index) => (
+            <div key={index} style={resultItemStyle}>
+              <h3 style={titleStyle}>{artwork.title}</h3>
+              {artwork.artist && (
+                <p style={artistStyle}>by {artwork.artist}</p>
+              )}
+              {artwork.movement && (
+                <p style={movementStyle}>Movement: {artwork.movement}</p>
+              )}
+              {artwork.imageData && (
+                <img
+                  src={`data:image/jpeg;base64,${artwork.imageData}`}
+                  alt={artwork.title}
+                  style={imageStyle}
+                />
+              )}
             </div>
           ))
         ) : (
-          query && <p>No results found</p>
+          query && <p style={noResultsStyle}>No results found</p>
         )}
       </div>
     </div>
   );
-};
-
-const formStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '100%',
-  margin: '20px auto',
-};
-
-const inputStyle = {
-  width: '100%',
-  padding: '15px',
-  fontSize: '1.2em',
-  borderRadius: '8px 0 0 8px',
-  border: '1px solid #ccc',
-  outline: 'none',
-};
-
-const buttonStyle = {
-  padding: '15px 25px',
-  fontSize: '1.2em',
-  borderRadius: '0 8px 8px 0',
-  backgroundColor: '#007bff',
-  color: 'white',
-  border: 'none',
-  cursor: 'pointer',
-};
-
-const resultsStyle = {
-  marginTop: '20px',
-  textAlign: 'center',
-};
-
-const resultItemStyle = {
-  padding: '10px',
-  border: '1px solid #ddd',
-  borderRadius: '5px',
-  margin: '10px 0',
 };
 
 export default Search;
