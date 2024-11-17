@@ -239,6 +239,16 @@ app.get('/api/cart/:userId', async (req, res) => {
   }
 });
 
+// Assuming you're using Express.js
+app.get('/api/cart', async (req, res) => {
+  try {
+      const cartItems = await Cart.find(); // Assuming Cart is your MongoDB model
+      res.json({ cartItems });
+  } catch (error) {
+      console.error('Error fetching cart items:', error);
+      res.status(500).send('Server error');
+  }
+});
 
 // Route to remove painting from the cart (optional)
 app.post('/api/cart/remove', cartController.removeFromCart);
