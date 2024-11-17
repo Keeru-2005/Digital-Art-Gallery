@@ -9,6 +9,7 @@ import Artist from './Artist';
 import Profile from './Profile';
 import Search from './Search';
 import Cart from './Cart';
+import PhotographDetail from './PhotographDetail';
 
 function App() {
     return (
