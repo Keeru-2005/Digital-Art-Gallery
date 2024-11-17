@@ -8,11 +8,14 @@ mongoose.connect('mongodb://localhost:27017/artgallery', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+//filesdfjhcghj,price,artist,title,yearCreation,signed,condition,period,movement,filename
 const paintingSchema = new mongoose.Schema({
   title: String,
   description: String,
-  category: String,
+  condition: String,
+  yearCreation:String,
+  artist:String,
+  movement:String,
   price: String,
   imageData: String,
 });
@@ -32,7 +35,7 @@ async function uploadPaintings() {
     })
     .on('end', async () => {
       for (const record of records) {
-        const { title, description, category, price, filename } = record;
+        const { title, description, condition, artist, yearCreation,  movement, price, filename } = record;
         const imagePath = path.join(imagesFolderPath, filename);
 
         if (fs.existsSync(imagePath)) {
@@ -41,7 +44,10 @@ async function uploadPaintings() {
           const newPainting = new Painting({
             title,
             description,
-            category,
+            condition,
+            artist,
+            yearCreation,
+            movement,
             price,
             imageData,
           });

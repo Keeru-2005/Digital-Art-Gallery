@@ -29,7 +29,10 @@ mongoose
 const paintingSchema = new mongoose.Schema({
   title: String,
   description: String,
-  category: String,
+  condition: String,
+  yearCreation:String,
+  artist:String,
+  movement:String,
   price: String,
   imageData: String,
 });
@@ -70,11 +73,12 @@ async function fetchPaginatedData(Model, filters, page, limit) {
 
 // API route to fetch paintings with pagination and filtering
 app.get('/api/paintings', async (req, res) => {
-  const { page = 1, limit = 25, category, minPrice, maxPrice } = req.query;
+  const { page = 1, limit = 25, yearCreation, movement, minPrice, maxPrice } = req.query;
 
   try {
     const filters = {};
-    if (category) filters.category = category;
+    if (yearCreation) filters.yearCreation = yearCreation;
+    if(movement) filters.movement=movement;
     if (minPrice && maxPrice) filters.price = { $gte: minPrice, $lte: maxPrice };
 
     const data = await fetchPaginatedData(Painting, filters, page, limit);

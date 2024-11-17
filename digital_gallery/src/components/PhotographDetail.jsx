@@ -1,6 +1,6 @@
 import React from 'react';
 
-function PhotographDetail({ photography }) {
+function PhotographDetail({ photography, onBack }) {
     // Inline styles for consistency
     const containerStyle = {
         margin: '20px auto',
@@ -17,6 +17,7 @@ function PhotographDetail({ photography }) {
 
     const buttonStyle = {
         marginTop: '20px',
+        marginRight:'10px',
         padding: '10px 20px',
         backgroundColor: '#A44277',
         color: 'white',
@@ -36,6 +37,9 @@ function PhotographDetail({ photography }) {
             <p>Copyright: {photography.copyright}</p>
             <p>Price: USD {photography.price}</p>
             <p>{photography.explanation}</p> {/* Add explanation if available */}
+            <button style={buttonStyle} onClick={onBack}>
+                Back to Photography
+            </button>
             <button style={buttonStyle}>Add to Cart</button>
         </div>
     );
