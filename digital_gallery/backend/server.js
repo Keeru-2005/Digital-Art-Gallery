@@ -1,13 +1,19 @@
+// server.js
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const app = express();
 
 // Middleware to handle cross-origin requests
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads')); // For serving images
+
+
+//user login and signup
+const {userLogin} = require("./controllers/user_control")
+const {userSignup} = require("./controllers/user_control")
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/artgallery', {
@@ -19,150 +25,104 @@ mongoose.connect('mongodb://localhost:27017/artgallery', {
   console.error('Failed to connect to MongoDB', err);
 });
 
-// Define User Schema for authentication
-const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
-  password: String,
-});
-
-const User = mongoose.model('User', userSchema);
-
-// Define the schema for the painting
+// Define the schema for paintings
 const imageSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  category: { type: String, required: true },
-  price: { type: String, required: true }, // Price is now a number
-  imageData: { type: String, required: true }, // Base64 encoded image data
+  title: String,
+  artist: String,   
+  movement: String,
+  description: String,
+  category: String,
+  price: String, // Price field for painting
+  imageData: String, // Base64 encoded image data
 });
 
 const Image = mongoose.model('Image', imageSchema);
 
-// Register route
-app.post('/api/signup', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
-    await newUser.save();
-    
-    res.status(201).json({ message: 'User created successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error creating user', error: err });
-  }
+// Define the schema for cart
+const cartSchema = new mongoose.Schema({
+  userId: String,  // You can store the user ID here (if users are authenticated)
+  items: [
+    {
+      paintingId: mongoose.Schema.Types.ObjectId,
+      quantity: { type: Number, default: 1 },
+    },
+  ],
 });
 
-// Login route
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
+const Cart = mongoose.model('Cart', cartSchema);
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
-    res.json({ message: 'Login successful', token });
-  } catch (err) {
-    res.status(500).json({ message: 'Error logging in', error: err });
-  }
-});
-
-// Middleware to authenticate JWT token
-const authenticate = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Extract token from header
-
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, 'secret_key');
-    req.userId = decoded.userId;
-    next();
-  } catch (err) {
-    res.status(400).json({ message: 'Invalid token', error: err });
-  }
-};
-
-// API route to fetch all paintings with pagination and filtering
+// Fetch paintings based on title
 app.get('/api/paintings', async (req, res) => {
-  const { page = 1, limit = 25, category, minPrice, maxPrice } = req.query;
+  const { page = 1, limit = 28, title } = req.query;
 
   try {
-    const pageNumber = parseInt(page);
-    const limitNumber = parseInt(limit);
-
     const filter = {};
-
-    if (category) {
-      filter.category = category;
+    if (title) {
+      filter.title = { $regex: title, $options: 'i' };
     }
 
-    if (minPrice && maxPrice) {
-      filter.price = { $gte: minPrice, $lte: maxPrice };
-    }
+    const skip = (page - 1) * limit;
+    const totalPaintings = await Image.countDocuments(filter);
+    const totalPages = Math.ceil(totalPaintings / limit);
 
     const paintings = await Image.find(filter)
-      .skip((pageNumber - 1) * limitNumber) // Pagination
-      .limit(limitNumber);
+      .skip(skip)
+      .limit(parseInt(limit))
+      .exec();
 
-    const totalCount = await Image.countDocuments(filter);
-
-    res.json({
-      paintings,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limitNumber),
-      currentPage: pageNumber,
-    });
+    res.json({ paintings, totalPages });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching paintings', error });
+    console.error('Error fetching paintings:', error);
+    res.status(500).json({ message: 'Error fetching paintings' });
   }
 });
 
-// API route to fetch a single painting by ID
-app.get('/api/paintings/:paintingId', async (req, res) => {
-  const paintingId = req.params.paintingId;  // Get painting ID from the URL
+
+// Add item to cart
+app.post('/api/cart/add', async (req, res) => {
+  const { userId, paintingId } = req.body;
 
   try {
-    // Find painting by ID
-    const painting = await Image.findById(paintingId);
+    const cart = await Cart.findOne({ userId });
 
-    if (painting) {
-      res.json(painting);  // Return the painting data as JSON
+    if (cart) {
+      // If painting is already in the cart, increase the quantity
+      const existingItemIndex = cart.items.findIndex(item => item.paintingId.equals(paintingId));
+      if (existingItemIndex > -1) {
+        cart.items[existingItemIndex].quantity += 1;
+      } else {
+        cart.items.push({ paintingId, quantity: 1 });
+      }
+      await cart.save();
     } else {
-      res.status(404).json({ message: 'Painting not found' });
+      // If cart does not exist, create a new one
+      const newCart = new Cart({ userId, items: [{ paintingId, quantity: 1 }] });
+      await newCart.save();
     }
-  } catch (err) {
-    console.error('Error fetching painting:', err);
-    res.status(500).json({ message: 'Error fetching painting', error: err });
+
+    res.status(200).json({ message: 'Item added to cart' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error adding item to cart' });
   }
 });
 
-// API route to add a new painting (authentication required)
-app.post('/api/paintings', authenticate, async (req, res) => {
-  const { title, description, category, price, imageData } = req.body;
+// Fetch items in cart
+app.get('/api/cart', async (req, res) => {
+  const { userId } = req.query;
 
   try {
-    const newPainting = new Image({ title, description, category, price, imageData });
-    await newPainting.save();
-    res.status(201).json({ message: 'Painting added successfully', painting: newPainting });
-  } catch (err) {
-    res.status(500).json({ message: 'Error adding painting', error: err });
+    const cart = await Cart.findOne({ userId }).populate('items.paintingId');  // Populate item data
+    res.json({ cart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching cart' });
   }
 });
+
+app.post("/api/signup",userSignup);
+app.post("/api/login",userLogin);
+//app.post("api/image",uploadImagesFromCSV)
 
 // Start the server
 const PORT = 5000;

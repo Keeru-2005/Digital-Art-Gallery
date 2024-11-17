@@ -10,6 +10,9 @@ import Profile from './Profile';
 import Search from './Search';
 import Cart from './Cart';
 import PaintingDetails from './PaintingDetails'
+import Gallery  from './gallery';
+import About from './about';
+import All from './All'
 
 function App() {
     return (
@@ -24,6 +27,9 @@ function App() {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/paintings/:paintingId" element={<PaintingDetails/>} />
+                <Route path="gallery" element ={<Gallery/>} />
+                <Route path="about" element ={<About/>} />
+                <Route path="all" element ={<All/>} />
 
             </Routes>
         </Router>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+    
 
 function ArtistProfile() {
     const [artist, setArtist] = useState(null);
