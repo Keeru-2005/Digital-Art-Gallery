@@ -9,8 +9,8 @@ function Home() {
                 <p>Explore a curated collection of breathtaking Paintings and Photography.</p>
 
                 <div className="home-buttons">
-                    <a href="/gallery" className="btn primary-btn">Browse Gallery</a>
-                    <a href="/about" className="btn secondary-btn">About Us</a>
+                    <a href="/gallery" className="btn primary-btn">About Us</a>
+                    
                 </div>
                 
             </header>
@@ -29,10 +29,10 @@ function Home() {
                     <h2>Photography</h2>
                     <p>Experience stunning photography capturing moments and emotions.</p>
                     <div className="art-grid">
-                        <img src="images/image_328.png" alt="pic1"  className="art-image" />
-                        <img src="images/image_282.png" alt="pic2" className="art-image" />
-                        <img src="images/image_134.png" alt="pic3" className="art-image" />
-                        <img src="images/image_401.png" alt="pic4" className="art-image" />
+                        <img src="images/2023-01-25.jpg" alt="pic1"  className="art-image" />
+                        <img src="images/2023-03-15.jpg" alt="pic2" className="art-image" />
+                        <img src="images/2023-01-17.jpg" alt="pic3" className="art-image" />
+                        <img src="images/2023-02-15.jpg" alt="pic4" className="art-image" />
                     </div>
                 </div>
             </section>

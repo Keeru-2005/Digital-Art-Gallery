@@ -6,7 +6,7 @@ import './App.css';
 function Navbar() {
     return (
         <nav className="navbar">
-            <Link to="/" className="navbar-item">Home</Link>
+            <Link to="/home" className="navbar-item">Home</Link>
             <Link to="/photography" className="navbar-item">Photography</Link>
             <Link to="/painting" className="navbar-item">Painting</Link>
             
