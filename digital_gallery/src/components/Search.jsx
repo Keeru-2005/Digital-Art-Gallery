@@ -67,19 +67,27 @@ const Search = () => {
     margin: '10px', // Some space around the button
   };
   
-  
-  const resultsStyle = { marginTop: '20px' };
+  const resultsStyle = { 
+    marginTop: '20px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', // Responsive grid
+    boxShadow: '0 6px 12px rgba(255, 138, 91, 0.6)', // Orange shadow for the box
+    gap: '20px',
+  };
   const resultItemStyle = {
-    marginBottom: '10px',
-    borderBottom: '1px solid #ccc',
-    paddingBottom: '10px',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    boxShadow: '0 6px 12px rgba(255, 138, 91, 0.6);', // Orange shadow for the box
+    padding: '15px',
+    backgroundColor: '#f9f9f9',
+    boxShadow: '0 4px 6px rgba(255, 138, 91, 0.6);',
   };
   const titleStyle = { fontSize: '20px', fontWeight: 'bold' };
   const artistStyle = { fontSize: '16px', fontStyle: 'italic' };
   const movementStyle = { fontSize: '14px', color: '#555' };
   const copyrightStyle = { fontSize: '14px', color: '#555' };
-  const noResultsStyle = { color: '#888' };
-  const imageStyle = { width: '100%', maxWidth: '400px', height: 'auto' };
+  const noResultsStyle = { color: '#888', textAlign: 'center' };
+  const imageStyle = { width: '100%', maxWidth: '300px', height: 'auto', borderRadius: '5px' };
 
   return (
     <div style={containerStyle}>
@@ -122,6 +130,3 @@ const Search = () => {
 };
 
 export default Search;
-
-
-
