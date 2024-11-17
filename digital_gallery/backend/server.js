@@ -1,5 +1,3 @@
-// server.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -81,25 +79,27 @@ async function fetchPaginatedData(Model, filters, page, limit) {
   };
 }
 
-// Fetch paintings based on title
+// Fetch paintings based on title, artist, or movement
+// Fetch paintings based on title, artist, movement (unified search query)
 app.get('/api/paintings', async (req, res) => {
-  const { page = 1, limit = 25, yearCreation, movement, minPrice, maxPrice, title } = req.query;
+  const { search, page = 1, limit = 25 } = req.query;
+
+  console.log('Received search query for paintings:', search); // Debugging line
 
   try {
     const filters = {};
 
-    // Handle the search functionality by title
-    if (title) {
-      const searchRegex = new RegExp(title, 'i'); // 'i' for case-insensitive search
-      filters.title = { $regex: searchRegex }; // Filter by title
+    if (search) {
+      // Search in title, artist, or movement
+      const searchRegex = new RegExp(search, 'i'); // 'i' for case-insensitive search
+      filters.$or = [
+        { title: { $regex: searchRegex } },
+        { artist: { $regex: searchRegex } },
+        { movement: { $regex: searchRegex } }
+      ];
     }
 
-    if (yearCreation) filters.yearCreation = yearCreation;
-    if (movement) filters.movement = movement;
-    if (minPrice && maxPrice) filters.price = { $gte: minPrice, $lte: maxPrice };
-
     const data = await fetchPaginatedData(Painting, filters, page, limit);
-
     res.json({
       paintings: data.data,
       totalCount: data.totalCount,
@@ -107,34 +107,45 @@ app.get('/api/paintings', async (req, res) => {
       currentPage: data.currentPage,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching paintings:', error);
     res.status(500).json({ message: 'Error fetching paintings' });
   }
 });
 
+// Fetch photographies based on title or copyright (unified search query)
 app.get('/api/photographies', async (req, res) => {
+  const { search, page = 1, limit = 25 } = req.query;
+
+  console.log('Received search query for photographs:', search); // Debugging line
+
   try {
-    const { page = 1, limit = 28 } = req.query;
-    const skip = (page - 1) * limit;
+    const filters = {};
 
-    // Fetch photographies with pagination
-    const photographies = await Photography.find({})
-      .skip(skip)
-      .limit(parseInt(limit))
-      .select('_id title imageData copyright price explanation'); // Explicitly include _id
+    if (search) {
+      // Search in title or copyright
+      const searchRegex = new RegExp(search, 'i'); // 'i' for case-insensitive search
+      filters.$or = [
+        { title: { $regex: searchRegex } },
+        { copyright: { $regex: searchRegex } }
+      ];
+    }
 
-    // Total count for pagination
-    const totalCount = await Photography.countDocuments();
-
+    const data = await fetchPaginatedData(Photography, filters, page, limit);
     res.json({
-      photographyImages: photographies,
-      totalPages: Math.ceil(totalCount / limit),
+      photographyImages: data.data,
+      totalPages: data.totalPages,
     });
   } catch (error) {
     console.error('Error fetching photographies:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Error fetching photographies' });
   }
 });
+
+
+
+// User routes
+app.post("/api/signup", userSignup);
+app.post("/api/login", userLogin);
 
 // CSV Import Endpoint to update artist names
 app.get('/import-artists', (req, res) => {
@@ -144,7 +155,6 @@ app.get('/import-artists', (req, res) => {
     .pipe(csvParser())
     .on('data', async (row) => {
       try {
-        // Update the painting by _id with the new artist name
         await Painting.updateOne(
           { _id: mongoose.Types.ObjectId(row._id) }, // Match by _id
           { $set: { artist: row.artist } } // Update the artist field
@@ -164,12 +174,9 @@ app.get('/import-artists', (req, res) => {
     });
 });
 
-// User routes
-app.post("/api/signup", userSignup);
-app.post("/api/login", userLogin);
-
 // Start the server
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
