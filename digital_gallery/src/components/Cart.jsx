@@ -1,7 +1,11 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 function Cart({ cart, removeFromCart, clearCart }) {
+    // Helper function to format the price
+    const formatPrice = (price) => {
+        return parseFloat(price.replace(',', '').replace('$', '')).toFixed(2);
+    };
+
     const totalPrice = cart.reduce((acc, painting) => acc + parseFloat(painting.price.replace(',', '').replace('$', '')), 0);
 
     return (
@@ -31,7 +35,7 @@ function Cart({ cart, removeFromCart, clearCart }) {
                                 />
                                 <h3>{painting.title}</h3>
                                 <p>{painting.artist}</p>
-                                <p>{painting.price}</p>
+                                <p>${formatPrice(painting.price)}</p>
                                 <button
                                     style={{
                                         backgroundColor: 'red',
@@ -76,6 +80,8 @@ function Cart({ cart, removeFromCart, clearCart }) {
                                     borderRadius: '4px',
                                     cursor: 'pointer',
                                 }}
+                                // Add a handler for checkout if needed
+                                onClick={() => alert('Proceeding to checkout!')}
                             >
                                 Proceed to Checkout
                             </button>

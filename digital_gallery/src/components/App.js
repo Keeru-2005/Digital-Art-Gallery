@@ -7,7 +7,7 @@ import Painting from './Painting';
 import Profile from './Profile';
 import Search from './Search';
 import Cart from './Cart';
-import PaintingDetails from './PaintingDetails';
+import PaintingDetail from './PaintingDetail';
 import Gallery from './gallery';
 
 function App() {
@@ -43,7 +43,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route 
                     path="/paintings/:paintingId" 
-                    element={<PaintingDetails addToCart={addToCart} />} 
+                    element={<PaintingDetail addToCart={addToCart} />} 
                 />
                 <Route path="/gallery" element={<Gallery />} />
             </Routes>
