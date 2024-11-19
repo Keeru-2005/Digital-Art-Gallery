@@ -91,19 +91,7 @@ function ProfilePage() {
         <div style={{ display: "flex", flexDirection: "row", width: "100%", height: "100%", padding: "40px", boxSizing: "border-box" }}>
       
           {/* Left Side - User's Cart */}
-          <div style={{ flex: 1, marginRight: "20px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
-            <h3>Your Cart</h3>
-            {/* Here you can map through cart items */}
-            {cartItems.length === 0 ? (
-              <p>Your cart is empty.</p>
-            ) : (
-              <ul>
-                {cartItems.map((item, index) => (
-                  <li key={index}>{item.name} - ${item.price}</li>
-                ))}
-              </ul>
-            )}
-          </div>
+          
 
           {/* Right Side - User Details */}
           <div style={{ flex: 1, padding: "20px", border: "1px solid #ddd", borderRadius: "8px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>

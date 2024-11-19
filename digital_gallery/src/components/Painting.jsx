@@ -5,34 +5,33 @@ import axios from 'axios';
 function Paintings() {
     const [paintings, setPaintings] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedPainting, setSelectedPainting] = useState(null); // Selected painting
-    const [cartItems, setCartItems] = useState([]); // To store the user's cart items
-
+    const [selectedPainting, setSelectedPainting] = useState(null);
+    const [cartItems, setCartItems] = useState([]);
     const [filters, setFilters] = useState({
         yearCreation: '',
         movement: '',
         minPrice: '',
         maxPrice: '',
     });
-
-    const [currentPage, setCurrentPage] = useState(1); // Track current page
-    const [totalPages, setTotalPages] = useState(1); // Track total pages
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         setLoading(true);
 
-        fetch(`http://localhost:5000/api/paintings?page=${currentPage}&limit=28`)
-            .then((response) => response.json())
-            .then((data) => {
+        axios
+            .get(`http://localhost:5000/api/paintings?page=${currentPage}&limit=28`)
+            .then((response) => {
+                const data = response.data;
                 setPaintings(data.paintings || []);
-                setTotalPages(data.totalPages || 1); // Set total pages if available
+                setTotalPages(data.totalPages || 1);
                 setLoading(false);
             })
             .catch((error) => {
                 console.error('Error fetching paintings:', error);
                 setLoading(false);
             });
-    }, [currentPage]); // Re-run the effect when the currentPage changes
+    }, [currentPage]);
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -52,32 +51,35 @@ function Paintings() {
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1); // Go to the next page
+            setCurrentPage(currentPage + 1);
         }
     };
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
-            setCurrentPage(currentPage - 1); // Go to the previous page
+            setCurrentPage(currentPage - 1);
         }
     };
 
     const handleAddToCart = async (painting) => {
-        // Add painting to the cart (local state or backend)
-        const userId = '12345'; // Replace with dynamic userId (perhaps from context or login)
+        const userId = '12345'; // Replace with the actual logged-in user ID
         try {
-            const response = await axios.post('http://localhost:5000/api/add', { userId, paintingId: painting._id });
-            // Assuming the response includes updated cart items
+            const response = await axios.post('http://localhost:5000/api/add', {
+                userId,
+                paintingId: painting._id,
+            });
             setCartItems(response.data.cartItems);
         } catch (error) {
             console.error('Error adding to cart:', error);
+            alert('Failed to add to cart. Please try again.');
         }
     };
 
     // Apply filters
     const filteredPaintings = paintings.filter((painting) => {
         const yearMatch = !filters.yearCreation || painting.yearCreation === filters.yearCreation;
-        const movementMatch = !filters.movement || painting.movement.toLowerCase().includes(filters.movement.toLowerCase());
+        const movementMatch =
+            !filters.movement || painting.movement.toLowerCase().includes(filters.movement.toLowerCase());
         const priceNumber = parseFloat(painting.price.split(' ')[0].replace('.', ''));
         const minPrice = filters.minPrice ? parseFloat(filters.minPrice.replace('.', '')) : null;
         const maxPrice = filters.maxPrice ? parseFloat(filters.maxPrice.replace('.', '')) : null;
@@ -85,91 +87,56 @@ function Paintings() {
         return yearMatch && movementMatch && priceMatch;
     });
 
-    const sidebarStyle = {
-        width: '250px',
-        padding: '20px',
-        backgroundColor: '#fff',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px',
-        marginRight: '20px',
-    };
-
-    const gridContainerStyle = {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-        gap: '20px',
-    };
-
-    const paintingCardStyle = {
-        backgroundColor: '#fff',
-        borderRadius: '8px',
-        padding: '15px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        cursor: 'pointer',
-    };
-
     if (selectedPainting) {
         return <PaintingDetail painting={selectedPainting} onBack={handleBack} />;
     }
 
     return (
-        <div style={{ display: 'flex', margin: '20px' }}>
-            <div style={sidebarStyle}>
+        <div style={{ display: 'flex', padding: '20px' }}>
+            {/* Sidebar */}
+            <div style={{ width: '250px', marginRight: '20px' }}>
                 <h3>Filters</h3>
-                <div>
-                    <label>Year of Creation:</label>
-                    <input
-                        type="text"
-                        name="yearCreation"
-                        value={filters.yearCreation}
-                        onChange={handleFilterChange}
-                        style={{ width: '100%', marginTop: '5px', padding: '8px' }}
-                    />
-                </div>
-                <div>
-                    <label>Movement:</label>
-                    <input
-                        type="text"
-                        name="movement"
-                        value={filters.movement}
-                        onChange={handleFilterChange}
-                        style={{ width: '100%', marginTop: '5px', padding: '8px' }}
-                    />
-                </div>
-                <div>
-                    <label>Min Price:</label>
-                    <input
-                        type="text"
-                        name="minPrice"
-                        value={filters.minPrice}
-                        onChange={handleFilterChange}
-                        style={{ width: '100%', marginTop: '5px', padding: '8px' }}
-                        placeholder="Ex: 20.000"
-                    />
-                </div>
-                <div>
-                    <label>Max Price:</label>
-                    <input
-                        type="text"
-                        name="maxPrice"
-                        value={filters.maxPrice}
-                        onChange={handleFilterChange}
-                        style={{ width: '100%', marginTop: '5px', padding: '8px' }}
-                        placeholder="Ex: 50.000"
-                    />
-                </div>
+                {['yearCreation', 'movement', 'minPrice', 'maxPrice'].map((filter) => (
+                    <div key={filter} style={{ marginBottom: '15px' }}>
+                        <label>
+                            {filter === 'minPrice' || filter === 'maxPrice'
+                                ? `Price (${filter === 'minPrice' ? 'Min' : 'Max'})`
+                                : filter.charAt(0).toUpperCase() + filter.slice(1)}:
+                        </label>
+                        <input
+                            type="text"
+                            name={filter}
+                            value={filters[filter]}
+                            onChange={handleFilterChange}
+                            style={{ width: '100%', marginTop: '5px', padding: '8px' }}
+                        />
+                    </div>
+                ))}
             </div>
 
+            {/* Paintings Grid */}
             <div style={{ flex: 1 }}>
                 {loading ? (
                     <p>Loading paintings...</p>
                 ) : (
                     <>
-                        <div style={gridContainerStyle}>
+                        <div
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                                gap: '20px',
+                            }}
+                        >
                             {filteredPaintings.map((painting) => (
                                 <div
                                     key={painting._id}
-                                    style={paintingCardStyle}
+                                    style={{
+                                        backgroundColor: '#fff',
+                                        padding: '15px',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                                        cursor: 'pointer',
+                                    }}
                                     onClick={() => handleTileClick(painting)}
                                 >
                                     <img
@@ -181,33 +148,17 @@ function Paintings() {
                                     <p>Year: {painting.yearCreation}</p>
                                     <p>Price: {painting.price}</p>
                                     <p>Movement: {painting.movement}</p>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleAddToCart(painting);
-                                        }}
-                                        style={{
-                                            backgroundColor: 'green',
-                                            color: 'white',
-                                            padding: '8px 16px',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                            marginTop: '10px',
-                                        }}
-                                    >
-                                        Add to Cart
-                                    </button>
+                                    
                                 </div>
                             ))}
                         </div>
 
-                        {/* Pagination Controls */}
-                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                        {/* Pagination */}
+                        <div style={{ marginTop: '20px', textAlign: 'center' }}>
                             <button onClick={handlePreviousPage} disabled={currentPage === 1}>
                                 Previous
                             </button>
-                            <span>
+                            <span style={{ margin: '0 15px' }}>
                                 Page {currentPage} of {totalPages}
                             </span>
                             <button onClick={handleNextPage} disabled={currentPage === totalPages}>

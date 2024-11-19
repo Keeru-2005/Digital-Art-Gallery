@@ -9,21 +9,32 @@ const Search = () => {
     e.preventDefault();
     console.log('Searching for:', query);
 
-    // Construct query parameters
-    const searchParams = new URLSearchParams();
-    if (query) {
-      searchParams.set('title', query); // Set the title as the query parameter
-    }
+    // Clear previous results before fetching new ones
+    setResults([]); // This ensures that previous results are cleared
 
-    // Fetch the paintings from the backend with the search query
+    // Construct query parameters for unified search
+    const searchParams = new URLSearchParams();
+    if (query) searchParams.set('search', query); // Set the query parameter to search by any field (title, artist, movement, copyright)
+
+    // Fetch paintings and photographs from the backend with the search query
     fetch(`http://localhost:5000/api/paintings?${searchParams.toString()}`)
       .then((response) => response.json())
       .then((data) => {
-        setResults(data.paintings); // Set the filtered paintings in the state
-        console.log('Filtered results:', data.paintings); // Log the results
+        console.log('Fetched paintings:', data.paintings); // Debugging line
+        setResults((prevResults) => [...prevResults, ...(data.paintings || [])]); // Append filtered paintings
       })
       .catch((error) => {
         console.error('Error fetching paintings:', error);
+      });
+
+    fetch(`http://localhost:5000/api/photographies?${searchParams.toString()}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Fetched photographs:', data.photographyImages); // Debugging line
+        setResults((prevResults) => [...prevResults, ...(data.photographyImages || [])]); // Append filtered photographs
+      })
+      .catch((error) => {
+        console.error('Error fetching photographs:', error);
       });
   };
 
@@ -55,26 +66,32 @@ const Search = () => {
     display: 'inline-block',
     margin: '10px', // Some space around the button
   };
-  
-  
-  const resultsStyle = { marginTop: '20px' };
-  const resultItemStyle = {
-    marginBottom: '10px',
-    borderBottom: '1px solid #ccc',
-    paddingBottom: '10px',
+  const gridStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+    gap: '20px',
+    marginTop: '20px',
   };
-  const titleStyle = { fontSize: '20px', fontWeight: 'bold' };
-  const artistStyle = { fontSize: '16px', fontStyle: 'italic' };
-  const movementStyle = { fontSize: '14px', color: '#555' };
+  const resultItemStyle = {
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    padding: '10px',
+    textAlign: 'center',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  };
+  const titleStyle = { fontSize: '18px', fontWeight: 'bold' };
+  const artistStyle = { fontSize: '14px', fontStyle: 'italic' };
+  const movementStyle = { fontSize: '12px', color: '#555' };
+  const copyrightStyle = { fontSize: '12px', color: '#555' };
   const noResultsStyle = { color: '#888' };
-  const imageStyle = { width: '100%', maxWidth: '400px', height: 'auto' };
+  const imageStyle = { width: '100%', maxHeight: '150px', objectFit: 'cover', borderRadius: '8px' };
 
   return (
     <div style={containerStyle}>
       <form onSubmit={handleSearch} style={formStyle}>
         <input
           type="text"
-          placeholder="Search by title..."
+          placeholder="Search by title, artist, movement, or copyright..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={inputStyle}
@@ -84,17 +101,14 @@ const Search = () => {
         </button>
       </form>
 
-      <div style={resultsStyle}>
+      <div style={gridStyle}>
         {results.length > 0 ? (
           results.map((artwork, index) => (
             <div key={index} style={resultItemStyle}>
               <h3 style={titleStyle}>{artwork.title}</h3>
-              {artwork.artist && (
-                <p style={artistStyle}>by {artwork.artist}</p>
-              )}
-              {artwork.movement && (
-                <p style={movementStyle}>Movement: {artwork.movement}</p>
-              )}
+              {artwork.artist && <p style={artistStyle}>by {artwork.artist}</p>}
+              {artwork.movement && <p style={movementStyle}>Movement: {artwork.movement}</p>}
+              {artwork.copyright && <p style={copyrightStyle}>Copyright: {artwork.copyright}</p>}
               {artwork.imageData && (
                 <img
                   src={`data:image/jpeg;base64,${artwork.imageData}`}

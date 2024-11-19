@@ -28,7 +28,8 @@ body {
 
 .home-header h1 {
     font-size: 2.5rem;
-    color: #444;
+    color: #A44277; /* Pink color for the welcome message */
+    text-shadow: 0 2px 4px rgba(255, 138, 91, 0.6); /* Adding a subtle orange shadow to the text */
 }
 
 .home-header p {
@@ -60,15 +61,26 @@ body {
 
 /* Primary Button (Browse Gallery) */
 .primary-btn {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    color: #fff;
+    display: inline-block;
+    padding: 1.0em 3em;
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #FFFFFF; /* White text for contrast */
+    background: linear-gradient(135deg, #A44277, #FF8A5B); /* Gradient from purple to orange */
     border: none;
+    border-radius: 25px; /* Rounded edges for a modern look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    cursor: pointer;
 }
 
 .primary-btn:hover {
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
-    transform: translateY(-5px); /* Button lift effect */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #FF8A5B, #A44277); /* Reverse gradient on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Slightly stronger shadow on hover */
+    transform: scale(1.05); /* Subtle zoom effect */
 }
 
 .primary-btn:active {
@@ -108,10 +120,10 @@ body {
 }
 
 .category h2 {
-    font-size: 2rem;
-    color: #444;
-    margin-bottom: 10px;
+    font-size: 2.5rem;
     text-align: center;
+    color: #A44277; /* Pink color for the welcome message */
+    text-shadow: 0 2px 4px rgba(255, 138, 91, 0.6); /* Adding a subtle orange shadow to the text */
 }
 
 .category p {
@@ -143,4 +155,15 @@ body {
 .art-image:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Box around Welcome Text */
+.welcome-box {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(255, 138, 91, 0.3); /* Orange shadow */
+    text-align: center;
+    max-width: 900px;
+    margin: 20px auto;
 }
